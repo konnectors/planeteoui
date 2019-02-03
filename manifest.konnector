@@ -1,0 +1,93 @@
+{
+  "version": "1.0.0",
+  "name": "Planète OUI Factures",
+  "type": "konnector",
+  "language": "node",
+  "icon": "planeteoui.png",
+  "slug": "planeteoui",
+  "source": "git://github.com/GromNaN/cozy-konnector-planeteoui.git",
+  "editor": "Cozy",
+  "vendor_link": "https://www.planete-oui.fr/",
+  "categories": [
+    "energy"
+  ],
+  "fields": {
+    "login": {
+      "type": "email"
+    },
+    "password": {
+      "type": "password"
+    },
+    "advancedFields": {
+      "folderPath": {
+        "advanced": true,
+        "isRequired": false
+      }
+    }
+  },
+  "data_types": [
+    "bill"
+  ],
+  "screenshots": [],
+  "permissions": {
+    "bank operations": {
+      "type": "io.cozy.bank.operations"
+    },
+    "bills": {
+      "type": "io.cozy.bills"
+    },
+    "files": {
+      "type": "io.cozy.files"
+    },
+    "accounts": {
+      "type": "io.cozy.accounts",
+      "verbs": ["GET"]
+    }
+  },
+  "developer": {
+    "name": "GromNaN",
+    "url": "https://github.com/GromNaN"
+  },
+  "langs": ["fr", "en"],
+
+  "locales": {
+    "fr": {
+      "short_description": "Récupère toutes factures Planète OUI",
+      "long_description": "Récupère toutes factures Planète OUI",
+      "permissions": {
+        "bank operations": {
+          "description": "Utilisé pour relier les factures à des operations bancaires"
+        },
+        "bills": {
+          "description": "Utilisé pour sauvegarder les données de facturation"
+        },
+        "files": {
+          "description": "Utilisé pour sauvegarder les factures"
+        },
+        "accounts": {
+          "description": "Utilisé pour obtenir les données du compte"
+        }
+      }
+    },
+    "en": {
+      "short_description": "Retrieves all your Planete OUI invoices",
+      "long_description": "Retrieves all your Planete OUI invoices",
+      "permissions": {
+        "bank operations": {
+          "description": "Required to link bank operations to bills"
+        },
+        "bills": {
+          "description": "Used to save billing data"
+        },
+        "files": {
+          "description": "Required to save the bills"
+        },
+        "accounts": {
+          "description": "Required to get the account's data"
+        }
+      }
+    }
+  },
+  "banksTransactionRegExp": "\\boui energy\\b",
+  "manifest_version": "2"
+}
