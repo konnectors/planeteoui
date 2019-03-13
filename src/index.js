@@ -4,6 +4,7 @@ const {
   signin,
   scrape,
   saveBills,
+  errors,
   log
 } = require('cozy-konnector-libs')
 const formatDate = require('date-fns/format')
@@ -45,7 +46,8 @@ async function start(fields) {
     // this is a bank identifier which will be used to link bills to bank operations. These
     // identifiers should be at least a word found in the title of a bank operation related to this
     // bill. It is not case sensitive.
-    identifiers: ['books']
+    // Bank operation example: "Oui Energy Sas 2019-02"
+    identifiers: ['Oui Energy']
   })
 }
 
@@ -65,7 +67,7 @@ function authenticate(email, password) {
         fullResponse.request.uri.href,
         'not used here but should be usefull for other connectors'
       )
-      // The login in toscrape.com always works excepted when no password is set
+      // The logout link is only available once signed in.
       if ($(`a[href='/Espace-Client/Deconnexion']`).length >= 1) {
         return true
       } else {
@@ -106,7 +108,8 @@ function parseDocuments($) {
     ...doc,
     currency: '€',
     vendor: 'Oui Energy',
-    filename: `${formatDate(doc.date, 'YYYY-MM')}-planete-oui.pdf`,
+    vendorRef: null, // @todo reference in the PDF file only
+    filename: `${formatDate(doc.date, 'YYYY-MM')}_planete-oui_${amount}€.pdf`,
     metadata: {
       // it can be interesting that we add the date of import. This is not mandatory but may be
       // useful for debugging or data migration
