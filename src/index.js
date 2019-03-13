@@ -31,12 +31,38 @@ async function start(fields) {
   log('info', 'Authenticating ...')
   await authenticate(fields.login, fields.password)
   log('info', 'Successfully logged in')
-  // The BaseKonnector instance expects a Promise as return of the function
+
+  // List all accounts
+  const $ = await request(`${baseUrl}/Espace-Client/Accueil`)
+  const accounts = $('.listesPdls a')
+    .map(function(i, a) {
+      const $a = $(a)
+      return {
+        id: $a.attr('href').match(/site=([0-9a-f]+)&/)[1],
+        href: $a.attr('href'),
+        name: $a.text().trim()
+      }
+    })
+    .get()
+
   log('info', 'Fetching the list of documents')
-  const $ = await request(`${baseUrl}/Espace-Client/Mes-Factures`)
-  // cheerio (https://cheerio.js.org/) uses the same api as jQuery (http://jquery.com/)
-  log('info', 'Parsing list of documents')
-  const documents = await parseDocuments($)
+  const documents = await accounts.reduce(async function(
+    documentsPromise,
+    account
+  ) {
+    // Resolve previous promise
+    const documents = await documentsPromise
+    log('info', `Parsing list of documents for "${account.name}"`)
+
+    // Switch account
+    await request(`${baseUrl}/Espace-Client/Accueil${account.href}`)
+
+    // Load documents
+    const $ = await request(`${baseUrl}/Espace-Client/Mes-Factures`)
+
+    return documents.concat(parseDocuments($, account))
+  },
+  Promise.resolve([]))
 
   // here we use the saveBills function even if what we fetch are not bills, but this is the most
   // common case in connectors
@@ -80,7 +106,7 @@ function authenticate(email, password) {
 
 // The goal of this function is to parse a html page wrapped by a cheerio instance
 // and return an array of js objects which will be saved to the cozy by saveBills (https://github.com/konnectors/libs/blob/master/packages/cozy-konnector-libs/docs/api.md#savebills)
-function parseDocuments($) {
+function parseDocuments($, account) {
   // you can find documentation about the scrape function here :
   // https://github.com/konnectors/libs/blob/master/packages/cozy-konnector-libs/docs/api.md#scrape
   const docs = scrape(
@@ -90,10 +116,9 @@ function parseDocuments($) {
         sel: 'td:nth-child(1)',
         parse: date => normalizeDate(date)
       },
-      fileurl: {
+      href: {
         sel: 'a',
-        attr: 'href',
-        parse: href => (href ? `${baseUrl}/Espace-Client/${href}` : null)
+        attr: 'href'
       },
       amount: {
         sel: 'td:nth-child(3)',
@@ -102,16 +127,19 @@ function parseDocuments($) {
     },
     '.tableFacturation tbody tr'
   )
-  return docs.filter(doc => doc.fileurl !== null).map(doc => ({
+  return docs.filter(doc => doc.href).map(doc => ({
     ...doc,
     currency: '€',
+    fileurl: `${baseUrl}/Espace-Client/${doc.href}`,
     vendor: 'Oui Energy',
-    vendorRef: null, // @todo reference is in the PDF file only
+    vendorRef: doc.href.split('/').pop(),
     filename: `${formatDate(
       doc.date,
       'YYYY-MM'
     )}_planete-oui_${doc.amount.toFixed(2)}€.pdf`,
     metadata: {
+      accountRef: account.id,
+      accountName: account.name,
       // it can be interesting that we add the date of import. This is not mandatory but may be
       // useful for debugging or data migration
       importDate: new Date(),
