@@ -4,7 +4,6 @@ const {
   signin,
   scrape,
   saveBills,
-  errors,
   log
 } = require('cozy-konnector-libs')
 const formatDate = require('date-fns/format')
@@ -62,18 +61,17 @@ function authenticate(email, password) {
     // different ways respond: http status code, error message in html ($), http redirection
     // (fullResponse.request.uri.href)...
     validate: (statusCode, $, fullResponse) => {
-      log(
-        'debug',
-        fullResponse.request.uri.href,
-        'not used here but should be usefull for other connectors'
-      )
+      log('debug', fullResponse.request.uri.href)
       // The logout link is only available once signed in.
       if ($(`a[href='/Espace-Client/Deconnexion']`).length >= 1) {
         return true
       } else {
         // cozy-konnector-libs has its own logging function which format these logs with colors in
         // standalone and dev mode and as JSON in production mode
-        log('error', $('.error').text())
+        const errorMessage = $('.error').text()
+        if (errorMessage) {
+          log('error', errorMessage.trim())
+        }
         return false
       }
     }
@@ -108,8 +106,11 @@ function parseDocuments($) {
     ...doc,
     currency: '€',
     vendor: 'Oui Energy',
-    vendorRef: null, // @todo reference in the PDF file only
-    filename: `${formatDate(doc.date, 'YYYY-MM')}_planete-oui_${amount}€.pdf`,
+    vendorRef: null, // @todo reference is in the PDF file only
+    filename: `${formatDate(
+      doc.date,
+      'YYYY-MM'
+    )}_planete-oui_${doc.amount.toFixed(2)}€.pdf`,
     metadata: {
       // it can be interesting that we add the date of import. This is not mandatory but may be
       // useful for debugging or data migration
@@ -135,5 +136,21 @@ function normalizePrice(price) {
  * @returns Date
  */
 function normalizeDate(date) {
-  return new Date(Date.parse(date))
+  const months = {
+    Janvier: '01',
+    Février: '02',
+    Mars: '03',
+    Avril: '04',
+    Mai: '05',
+    Juin: '06',
+    Juillet: '07',
+    Août: '08',
+    Septembre: '09',
+    Octobre: '10',
+    Novembre: '11',
+    Décembre: '12'
+  }
+  const [month, year] = date.split(' ')
+
+  return new Date(year + '-' + months[month] + '-01T00:00:00')
 }
