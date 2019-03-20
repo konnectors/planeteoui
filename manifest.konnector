@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
-  "name": "Planète OUI Factures",
+  "name": "Planète OUI",
   "type": "konnector",
   "language": "node",
   "icon": "planeteoui.png",
   "slug": "planeteoui",
-  "source": "git://github.com/GromNaN/cozy-konnector-planeteoui.git",
+  "source": "git://github.com/konnectors/planeteoui.git",
   "editor": "Cozy",
   "vendor_link": "https://www.planete-oui.fr/",
   "categories": [
