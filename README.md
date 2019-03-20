@@ -36,7 +36,7 @@ Then :
 yarn
 yarn standalone
 ```
-For running the konnector connected to a Cozy server and more details see [konnectors documentation](https://docs.cozy.io/en/dev/konnector/)
+For running the konnector connected to a Cozy server and more details see [konnectors documentation](https://docs.cozy.io/en/tutorials/konnector/)
 
 ### Cozy-konnector-libs
 
