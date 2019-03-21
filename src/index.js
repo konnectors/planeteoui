@@ -131,26 +131,28 @@ function parseDocuments($, account) {
     },
     '.tableFacturation tbody tr'
   )
-  return docs.filter(doc => doc.href).map(doc => ({
-    ...doc,
-    currency: '€',
-    fileurl: `${baseUrl}/Espace-Client/${doc.href}`,
-    vendor: 'Oui Energy',
-    vendorRef: doc.href.split('/').pop(),
-    filename: `${formatDate(
-      doc.date,
-      'YYYY-MM'
-    )}_planete-oui_${doc.amount.toFixed(2)}€.pdf`,
-    metadata: {
-      accountRef: account.id,
-      accountName: account.name,
-      // it can be interesting that we add the date of import. This is not mandatory but may be
-      // useful for debugging or data migration
-      importDate: new Date(),
-      // document version, useful for migration after change of document structure
-      version: 1
-    }
-  }))
+  return docs
+    .filter(doc => doc.href)
+    .map(doc => ({
+      ...doc,
+      currency: '€',
+      fileurl: `${baseUrl}/Espace-Client/${doc.href}`,
+      vendor: 'Oui Energy',
+      vendorRef: doc.href.split('/').pop(),
+      filename: `${formatDate(
+        doc.date,
+        'YYYY-MM'
+      )}_planete-oui_${doc.amount.toFixed(2)}€.pdf`,
+      metadata: {
+        accountRef: account.id,
+        accountName: account.name,
+        // it can be interesting that we add the date of import. This is not mandatory but may be
+        // useful for debugging or data migration
+        importDate: new Date(),
+        // document version, useful for migration after change of document structure
+        version: 1
+      }
+    }))
 }
 
 // convert a price string to a float
