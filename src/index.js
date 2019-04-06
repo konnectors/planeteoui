@@ -8,7 +8,8 @@ const {
   signin,
   scrape,
   saveBills,
-  log
+  log,
+  mkdirp
 } = require('cozy-konnector-libs')
 const formatDate = require('date-fns/format')
 const request = requestFactory({
@@ -49,35 +50,30 @@ async function start(fields) {
     })
     .get()
 
-  log('info', 'Fetching the list of documents')
-  const documents = await accounts.reduce(async function(
-    documentsPromise,
-    account
-  ) {
-    // Resolve previous promise
-    const documents = await documentsPromise
+  for (let account of accounts) {
     log('info', `Parsing list of documents for "${account.name}"`)
-
-    // Switch account
+    // Switch to account
     await request(`${baseUrl}/Espace-Client/Accueil${account.href}`)
-
-    // Load documents
     const $ = await request(`${baseUrl}/Espace-Client/Mes-Factures`)
+    const documents = parseDocuments($, account)
 
-    return documents.concat(parseDocuments($, account))
-  },
-  Promise.resolve([]))
+    log('info', 'Saving data to Cozy')
+    // Create sub dir if needed
+    const accountFolderPath = [fields.folderPath, account.name].join('/')
+    await mkdirp(accountFolderPath)
 
-  // here we use the saveBills function even if what we fetch are not bills, but this is the most
-  // common case in connectors
-  log('info', 'Saving data to Cozy')
-  await saveBills(documents, fields, {
-    // this is a bank identifier which will be used to link bills to bank operations. These
-    // identifiers should be at least a word found in the title of a bank operation related to this
-    // bill. It is not case sensitive.
-    // Bank operation example: "Oui Energy Sas 2019-02"
-    identifiers: ['Oui Energy']
-  })
+    await saveBills(
+      documents,
+      { folderPath: accountFolderPath },
+      {
+        // this is a bank identifier which will be used to link bills to bank operations. These
+        // identifiers should be at least a word found in the title of a bank operation related to this
+        // bill. It is not case sensitive.
+        // Bank operation example: "Oui Energy Sas 2019-02"
+        identifiers: ['Oui Energy']
+      }
+    )
+  }
 }
 
 // this shows authentication using the [signin function](https://github.com/konnectors/libs/blob/master/packages/cozy-konnector-libs/docs/api.md#module_signin)
