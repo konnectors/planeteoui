@@ -13,15 +13,9 @@ const {
 } = require('cozy-konnector-libs')
 const formatDate = require('date-fns/format')
 const request = requestFactory({
-  // the debug mode shows all the details about http request and responses. Very useful for
-  // debugging but very verbose. That is why it is commented out by default
   // debug: true,
-  // activates [cheerio](https://cheerio.js.org/) parsing on each page
   cheerio: true,
-  // If cheerio is activated do not forget to deactivate json parsing (which is activated by
-  // default in cozy-konnector-libs
   json: false,
-  // this allows request-promise to keep cookies between requests
   jar: true
 })
 
