@@ -1,9 +1,9 @@
 {
-  "version": "1.1.0",
+  "version": "1.0.1",
   "name": "Planète OUI",
   "type": "konnector",
   "language": "node",
-  "icon": "planeteoui.png",
+  "icon": "planeteoui.svg",
   "slug": "planeteoui",
   "source": "git://github.com/konnectors/planeteoui.git",
   "editor": "Cozy",
