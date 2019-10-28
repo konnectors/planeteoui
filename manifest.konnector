@@ -3,7 +3,7 @@
   "name": "Planète OUI",
   "type": "konnector",
   "language": "node",
-  "icon": "planeteoui.png",
+  "icon": "planeteoui.svg",
   "slug": "planeteoui",
   "source": "git://github.com/konnectors/planeteoui.git",
   "editor": "Cozy",
