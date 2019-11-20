@@ -131,7 +131,7 @@ function parseDocuments($, account) {
       vendorRef: doc.href.split('/').pop(),
       filename: `${formatDate(
         doc.date,
-        'YYYY-MM'
+        'yyyy-MM'
       )}_planete-oui_${doc.amount.toFixed(2)}€.pdf`,
       metadata: {
         accountRef: account.id,
