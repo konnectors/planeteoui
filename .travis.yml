@@ -1,10 +1,8 @@
 language: node_js
 node_js:
-- '8'
+- '12'
 env:
   global:
-  - GH_USER_EMAIL="travis@example.org"
-  - GH_USER_NAME="cozy-bot"
   - DEPLOY_REPOSITORY="git@github.com:konnectors/planeteoui.git"
   - secure: ptCOr/gRkx/GPCqmLdzQKIIe/QcBzt/Kdii8MXDcmqDTL1TqBmQWhLkfdqJEjgH+vACfsA2aH/PlJuXE8a9Fm3UvtMzHnWndagNADRfAsWi3+CSdZ/ur17E7bkE0hLjMTNLkh5hb9ZWruqVC8QLmgDYqEqGNCH7chSmlmJ9ie2UX6OdsrS6RHv4Us/nsoAGCKCuUzoI5M2ngz28wbFxeMwxFSQ6+xZ7kkIFfvn4LaE8Tm+W19H9Jmtr8DyzY2MCMLAna+msAjxVktyJmpaiFBnrjL1Ksbvinl+kzCt64HFtRHhVEf4xarHfUj+S8m9MHFdbVWIA8L6wVIQSI/FOGNjpfFa+Q7p3VqsoqkYd1fPBHygd629G6+as5qvuBfoZto0OXA1GOjxrLwfTjfSJBtJPlT3+rXTn0/IBq86keWkX5ayEGUwtgaL29wKM9Xqx3IpC7vC/qdlVjdia5VScA2kE5YaaB0pn5QUXu0sS5Pd1FQUDAYxDmKWZKTBII7xCMEB++sIb43uvl00hkrdrieGfjEzOPXUBsxEm/7yXRbKBmoyrkCuBbLave9p5ZqNhRn1q2U/ugRVvpS5B7wXNmXiDx5L7hD41bkCUNILIhacGcghxcRAGhQbtLv4WjiBKKOvBxk3+oSvmbwL30NQKb4bRIOGo8LAQisX9MWXMr/v8=
 cache:
@@ -18,7 +16,6 @@ branches:
 script:
 - yarn lint
 - yarn build
-- yarn run check
 deploy:
 - provider: script
   skip-cleanup: true
