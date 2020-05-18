@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "cozy-konnector-libs": "4.34.3",
-    "date-fns": "2.8.0"
+    "date-fns": "2.14.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "5.0.5",
